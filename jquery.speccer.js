@@ -58,10 +58,16 @@ function releasetheKraken() {
 		};
 	};
 
-	Speccer.format = function (builder) {
-		var uniques = $.unique(builder);
+	Speccer.format = function () {
+		var sortedUniques = [];
 
-		return $.map(uniques, function (val) {
+		$.each(this.builder, function (index, val) {
+			if ($.inArray(val, sortedUniques) <= 1) {
+				sortedUniques.push(val);
+			}
+		});
+
+		return $.map(sortedUniques, function (val) {
 			if (val[0] !== '/') {
 				return '.' + val + ' {}';
 			} else {
@@ -70,18 +76,19 @@ function releasetheKraken() {
 		}).join('\n');
 	};
 
+	// @return {Array} builder, complete list of all elements
 	Speccer.render = function () {
 		var _this = this;
-		var builder = [];
+		// this.builder = [];
 
 		if (this.map) {
-			builder = $.map(this.map, function (val, index) {
+			this.builder = $.map(this.map, function (val, index) {
 				var sections = [];
 				sections.push(val['classes']);
 
 				if (val['children']) {
 					$.each(_this.renderRecursive(val['children']), function (index, val) {
-						$.merge(sections, val);
+						sections.push(val);
 					});
 				}
 
@@ -89,7 +96,7 @@ function releasetheKraken() {
 				return sections;
 			});
 
-			return this.format(builder);
+			return this;
 		} else {
 			// init for lazy people
 			this.render(this.init());
@@ -102,7 +109,10 @@ function releasetheKraken() {
 			var classes = [];
 
 			if (val['classes']) {
-				classes.push(val['classes'].split(/\s+/));
+				$.each(val['classes'].split(/\s+/), function (index, val) {
+					classes.push(val);
+				});
+				// classes.push();
 			}
 
 			if (val['children']) {
@@ -118,5 +128,5 @@ function releasetheKraken() {
 
 	var mySpeccer = window.Speccer.extend();
 
-	console.log(mySpeccer.init().render());
+	console.log(mySpeccer.init().render().format());
 }
