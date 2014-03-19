@@ -23,7 +23,7 @@ function releasetheKraken() {
 	};
 
 	Speccer.extend = function (options) {
-		if (options) { $.extend(settings, options); }
+		if (options) { $.extend(this.settings, options); }
 		return $.extend({}, this);
 	};
 
