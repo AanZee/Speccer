@@ -8,113 +8,113 @@ if (!($ = window.jQuery)) {
 }
 
 function releasetheKraken() {
-	console.log(window.Speccer.render());
-
 	/**
 	 * Speccer.js
 	 * ------------------------------------------------------
 	 * Author: Jeroen Ransijn
 	 * Company: Aan Zee
 	 */
-	;(function($) {
+	// ;(function($) {
 
-		var Speccer = window.Speccer = {};
+	var Speccer = window.Speccer = {};
 
-		Speccer.settings = {
-			'$el' : $('body')
-		};
+	Speccer.settings = {
+		'$el' : $('body')
+	};
 
-		Speccer.extend = function (options) {
-			if (options) { $.extend(settings, options); }
-			return $.extend({}, this);
-		};
+	Speccer.extend = function (options) {
+		if (options) { $.extend(settings, options); }
+		return $.extend({}, this);
+	};
 
-		Speccer.init = function () {
-			var _this = this;
+	Speccer.init = function () {
+		var _this = this;
 
-			this.map = this.settings.$el.children().map(function () {
-				var obj = _this.specRecursive($(this));
+		this.map = this.settings.$el.children().map(function () {
+			var obj = _this.specRecursive($(this));
 
-				if (obj['className'] || obj['children']) {
-					return obj;
-				}
+			if (obj['className'] || obj['children']) {
+				return obj;
+			}
+		}).get();
+
+		return this;
+	};
+
+	Speccer.specRecursive = function ($el) {
+		var _this = this;
+		var className = $el.attr('class');
+		var children;
+
+		if ($el.children().length > 0) {
+			children = $el.children().map(function () {
+				return _this.specRecursive($(this));
 			}).get();
+		}
 
-			return this;
+		return {
+			classes: className,
+			children: children
 		};
+	};
 
-		Speccer.specRecursive = function ($el) {
-			var _this = this;
-			var className = $el.attr('class');
-			var children;
+	Speccer.format = function (builder) {
+		var uniques = $.unique(builder);
 
-			if ($el.children().length > 0) {
-				children = $el.children().map(function () {
-					return _this.specRecursive($(this));
-				}).get();
-			}
-
-			return {
-				classes: className,
-				children: children
-			};
-		};
-
-		Speccer.format = function (builder) {
-			var uniques = $.unique(builder);
-
-			return $.map(uniques, function (val) {
-				if (val[0] !== '/') {
-					return '.' + val + ' {}';
-				} else {
-					return val;
-				}
-			}).join('\n');
-		};
-
-		Speccer.render = function () {
-			var _this = this;
-			var builder = [];
-
-			if (this.map) {
-				builder = $.map(this.map, function (val, index) {
-					var sections = [];
-					sections.push(val['classes']);
-
-					if (val['children']) {
-						$.each(_this.renderRecursive(val['children']), function (index, val) {
-							$.merge(sections, val);
-						});
-					}
-
-					sections.push("/* end: " +  val['classes'] + " */ \n");
-					return sections;
-				});
-
-				return this.format(builder);
+		return $.map(uniques, function (val) {
+			if (val[0] !== '/') {
+				return '.' + val + ' {}';
 			} else {
-				// init for lazy people
-				this.render(this.init());
+				return val;
 			}
-		};
+		}).join('\n');
+	};
 
-		Speccer.renderRecursive = function (children) {
-			var _this = this;
-			return $.map(children, function (val, index) {
-				var classes = [];
+	Speccer.render = function () {
+		var _this = this;
+		var builder = [];
 
-				if (val['classes']) {
-					classes.push(val['classes'].split(/\s+/));
-				}
+		if (this.map) {
+			builder = $.map(this.map, function (val, index) {
+				var sections = [];
+				sections.push(val['classes']);
 
 				if (val['children']) {
 					$.each(_this.renderRecursive(val['children']), function (index, val) {
-						classes.push(val);
+						$.merge(sections, val);
 					});
 				}
 
-				return classes;
+				sections.push("/* end: " +  val['classes'] + " */ \n");
+				return sections;
 			});
-		};
-	}(jQuery));
+
+			return this.format(builder);
+		} else {
+			// init for lazy people
+			this.render(this.init());
+		}
+	};
+
+	Speccer.renderRecursive = function (children) {
+		var _this = this;
+		return $.map(children, function (val, index) {
+			var classes = [];
+
+			if (val['classes']) {
+				classes.push(val['classes'].split(/\s+/));
+			}
+
+			if (val['children']) {
+				$.each(_this.renderRecursive(val['children']), function (index, val) {
+					classes.push(val);
+				});
+			}
+
+			return classes;
+		});
+	};
+	// }(jQuery));
+
+	console.log(window.Speccer.render());
 }
