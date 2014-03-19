@@ -1,3 +1,16 @@
+if (!($ = window.jQuery)) {
+	script = document.createElement( 'script' );
+	script.src = 'http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js';
+	script.onload = releasetheKraken;
+	document.body.appendChild(script);
+} else {
+	releasetheKraken();
+}
+
+function releasetheKraken() {
+	window.Speccer.render();
+}
+
 /**
  * Speccer.js
  * ------------------------------------------------------
