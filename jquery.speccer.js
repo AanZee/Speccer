@@ -116,5 +116,7 @@ function releasetheKraken() {
 	};
 	// }(jQuery));
 
-	console.log(window.Speccer.render());
+	var mySpeccer = window.Speccer.extend();
+
+	console.log(mySpeccer.init().render());
 }
