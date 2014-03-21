@@ -1,3 +1,10 @@
+/**
+ * Speccer.js
+ * ------------------------------------------------------
+ * Author: Jeroen Ransijn
+ * Company: Aan Zee
+ * Still contains a lot of bugs
+ */
 if (!($ = window.jQuery)) {
 	script = document.createElement( 'script' );
 	script.src = 'http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js';
@@ -8,12 +15,6 @@ if (!($ = window.jQuery)) {
 }
 
 function releasetheKraken() {
-	/**
-	 * Speccer.js
-	 * ------------------------------------------------------
-	 * Author: Jeroen Ransijn
-	 * Company: Aan Zee
-	 */
 	// ;(function($) {
 
 	var Speccer = window.Speccer = {};
@@ -62,7 +63,7 @@ function releasetheKraken() {
 		var sortedUniques = [];
 
 		$.each(this.builder, function (index, val) {
-			if ($.inArray(val, sortedUniques) <= 1) {
+			if ($.inArray(val, sortedUniques) <= 1 && val !== undefined) {
 				sortedUniques.push(val);
 			}
 		});
@@ -84,7 +85,11 @@ function releasetheKraken() {
 		if (this.map) {
 			this.builder = $.map(this.map, function (val, index) {
 				var sections = [];
-				sections.push(val['classes']);
+				if (val['classes'] !== undefined) {
+					$.each(val['classes'].split(/\s+/), function (index, val) {
+						sections.push(val);
+					});
+				}
 
 				if (val['children']) {
 					$.each(_this.renderRecursive(val['children']), function (index, val) {
